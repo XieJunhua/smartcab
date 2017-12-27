@@ -53,9 +53,9 @@ class LearningAgent(Agent):
             # else:
             # self.epsilon = 1.0 / (self.t ** 2)
             # self.epsilon = self.epsilon - 0.05
-            self.epsilon = 0.99 ** self.t
+            # self.epsilon = 0.994 * self.epsilon
             # self.epsilon = math.cos(self.alpha * self.t)
-            # self.epsilon = math.e ** (-self.t * 0.01)
+            self.epsilon = math.e ** (-self.t * 0.0025)
 
 
 
@@ -90,14 +90,9 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Calculate the maximum Q-value of all actions for a given state
-        print self.Q[state]
-        maxQ = (self.Q[state].keys()[0], 0.0)
-        for x in self.Q[state]:
-            if maxQ[1] < self.Q[state][x]:
-                maxQ = (x, self.Q[state][x])
-        # maxQ = max(self.Q[state].values())
-        # print "maxQ %d" % maxQ[1]
-        return maxQ 
+        actions_dict = self.Q[state]
+        actions = [key for key,val in actions_dict.iteritems() if val == max(actions_dict.values())]
+        return random.choice(actions)
 
 
     def createQ(self, state):
@@ -125,7 +120,7 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = random.choice(self.valid_actions)
+
 
         ########### 
         ## TO DO ##
@@ -133,8 +128,9 @@ class LearningAgent(Agent):
         # When not learning, choose a random action
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
+        action = random.choice(self.valid_actions)
         if random.uniform(0, 1) > self.epsilon:
-            action = self.get_maxQ(state)[0] 
+            action = self.get_maxQ(state)
  
         return action
 
@@ -207,14 +203,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay = 0.01, log_metrics = True, display = False, optimized=True)
+    sim = Simulator(env, update_delay = 0.001, log_metrics = True, display = False, optimized=True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 300, tolerance=0.1)
+    sim.run(n_test = 200, tolerance=0.05)
 
 
 if __name__ == '__main__':
