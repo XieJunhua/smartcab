@@ -3,6 +3,7 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+import os
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -55,7 +56,7 @@ class LearningAgent(Agent):
             # self.epsilon = self.epsilon - 0.05
             # self.epsilon = 0.994 * self.epsilon
             # self.epsilon = math.cos(self.alpha * self.t)
-            self.epsilon = math.e ** (-self.t * 0.0025)
+            self.epsilon = math.e ** (-self.t * 0.003)
 
 
 
@@ -129,7 +130,7 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
         action = random.choice(self.valid_actions)
-        if random.uniform(0, 1) > self.epsilon:
+        if random.uniform(0, 1) > self.epsilon and self.learning:
             action = self.get_maxQ(state)
  
         return action
@@ -210,8 +211,9 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test = 200, tolerance=0.05)
+    sim.run(n_test = 200, tolerance=0.01)
 
 
 if __name__ == '__main__':
     run()
+    os.system('say "your program has finished"')
